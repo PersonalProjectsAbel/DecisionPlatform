@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DecisionPlanner.Api/DecisionPlanner.Api.csproj" />
+    <Project Path="src/DecisionPlanner.Application/DecisionPlanner.Application.csproj" />
+    <Project Path="src/DecisionPlanner.Domain/DecisionPlanner.Domain.csproj" />
+    <Project Path="src/DecisionPlanner.Infrastructure/DecisionPlanner.Infrastructure.csproj" />
+    <Project Path="src/DecisionPlanner.Migrations/DecisionPlanner.Migrations.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,15 @@
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Application/bin/Debug/net10.0/DecisionPlanner.Application.deps.json
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Application/bin/Debug/net10.0/DecisionPlanner.Application.dll
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Application/bin/Debug/net10.0/DecisionPlanner.Application.pdb
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Application/bin/Debug/net10.0/DecisionPlanner.Domain.dll
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Application/bin/Debug/net10.0/DecisionPlanner.Domain.pdb
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Application/obj/Debug/net10.0/DecisionPlanner.Application.csproj.AssemblyReference.cache
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Application/obj/Debug/net10.0/DecisionPlanner.Application.GeneratedMSBuildEditorConfig.editorconfig
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Application/obj/Debug/net10.0/DecisionPlanner.Application.AssemblyInfoInputs.cache
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Application/obj/Debug/net10.0/DecisionPlanner.Application.AssemblyInfo.cs
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Application/obj/Debug/net10.0/DecisionPlanner.Application.csproj.CoreCompileInputs.cache
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Application/obj/Debug/net10.0/Decision.BC3AB312.Up2Date
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Application/obj/Debug/net10.0/DecisionPlanner.Application.dll
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Application/obj/Debug/net10.0/refint/DecisionPlanner.Application.dll
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Application/obj/Debug/net10.0/DecisionPlanner.Application.pdb
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Application/obj/Debug/net10.0/ref/DecisionPlanner.Application.dll

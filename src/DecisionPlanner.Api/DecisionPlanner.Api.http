@@ -1,0 +1,13 @@
+@DecisionPlanner.Api_HostAddress = http://localhost:5189
+
+POST {{DecisionPlanner.Api_HostAddress}}/api/meetings
+Content-Type: application/json
+
+{
+	"title": "Architecture review",
+	"description": "Review the next Meeting use cases.",
+	"startsAt": "2026-09-24T10:00:00Z",
+	"endsAt": "2026-09-24T11:00:00Z"
+}
+
+###

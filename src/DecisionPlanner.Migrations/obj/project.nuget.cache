@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "FNmngVCFOqI=",
+  "dgSpecHash": "ztgnBybzBEE=",
   "success": true,
   "projectFilePath": "/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Migrations/DecisionPlanner.Migrations.csproj",
   "expectedPackageFiles": [
@@ -32,6 +32,9 @@
     "/Users/abel/.nuget/packages/microsoft.extensions.dependencyinjection/10.0.12/microsoft.extensions.dependencyinjection.10.0.12.nupkg.sha512",
     "/Users/abel/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/10.0.12/microsoft.extensions.dependencyinjection.abstractions.10.0.12.nupkg.sha512",
     "/Users/abel/.nuget/packages/microsoft.extensions.dependencymodel/10.0.12/microsoft.extensions.dependencymodel.10.0.12.nupkg.sha512",
+    "/Users/abel/.nuget/packages/microsoft.extensions.diagnostics.abstractions/10.0.5/microsoft.extensions.diagnostics.abstractions.10.0.5.nupkg.sha512",
+    "/Users/abel/.nuget/packages/microsoft.extensions.fileproviders.abstractions/10.0.5/microsoft.extensions.fileproviders.abstractions.10.0.5.nupkg.sha512",
+    "/Users/abel/.nuget/packages/microsoft.extensions.hosting.abstractions/10.0.5/microsoft.extensions.hosting.abstractions.10.0.5.nupkg.sha512",
     "/Users/abel/.nuget/packages/microsoft.extensions.logging/10.0.12/microsoft.extensions.logging.10.0.12.nupkg.sha512",
     "/Users/abel/.nuget/packages/microsoft.extensions.logging.abstractions/10.0.12/microsoft.extensions.logging.abstractions.10.0.12.nupkg.sha512",
     "/Users/abel/.nuget/packages/microsoft.extensions.options/10.0.12/microsoft.extensions.options.10.0.12.nupkg.sha512",

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DecisionPlanner.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c6ad4616a1644254c26930005049c82bde56f875")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5c9c1bdb7697a5377b02bb0d2ff5b76eb093bc56")]
 [assembly: System.Reflection.AssemblyProductAttribute("DecisionPlanner.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DecisionPlanner.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

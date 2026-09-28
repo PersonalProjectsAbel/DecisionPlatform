@@ -33,7 +33,7 @@ See [ADR-0004](docs/adr/0004-eventstoredb-and-postgresql-projections.md) for the
 
 ## Current implementation status
 
-The repository is an early implementation. The Meeting use cases now append versioned domain events to KurrentDB (formerly EventStoreDB) and rebuild meeting aggregates by replaying their streams. The API currently reads meeting details by replaying the corresponding stream. PostgreSQL remains configured, but the .NET PostgreSQL read projections and the Python minutes service are not yet implemented.
+The repository is an early implementation. Meeting use cases append versioned domain events to KurrentDB (formerly EventStoreDB) and rebuild aggregates by replaying their streams. A hosted .NET projection consumes Meeting stream events and maintains the PostgreSQL meeting and participant tables. The GET API currently reads by replaying KurrentDB streams; switching queries to PostgreSQL is a follow-up. The Python minutes service is not yet implemented.
 
 The solution currently contains these projects:
 

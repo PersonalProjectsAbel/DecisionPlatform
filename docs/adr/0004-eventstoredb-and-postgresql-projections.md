@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted — Meeting event-stream persistence is implemented; projections and Python integration are pending.
+Accepted — Meeting event-stream persistence and its PostgreSQL projection are implemented; Python integration is pending.
 
 ## Context
 
@@ -26,7 +26,7 @@ The .NET application remains a modular monolith. Modules communicate through exp
 
 ADR-0003 established EF Core, PostgreSQL, a `DbContext`, and a dedicated migrations project for the initial persistence implementation. This ADR supersedes ADR-0003 only for the write-side source of truth and the role of PostgreSQL: PostgreSQL is a projection store in the target architecture, while EventStoreDB owns the authoritative event streams.
 
-EF Core may remain useful for PostgreSQL projection storage and schema migrations. The earlier EF Core model that saved current Meeting state directly as the authoritative record has been replaced for the Meeting write path by event streams. PostgreSQL projections are still pending. Migration from that implementation must be planned explicitly; existing data and migration history must not be discarded implicitly.
+EF Core may remain useful for PostgreSQL projection storage and schema migrations. The earlier EF Core model that saved current Meeting state directly as the authoritative record has been replaced for the Meeting write path by event streams. A hosted .NET consumer now projects Meeting events into PostgreSQL. The API GET path still reads from KurrentDB until projection coverage and query behavior are reviewed. Migration from that implementation must be planned explicitly; existing data and migration history must not be discarded implicitly.
 
 ## Consequences
 
@@ -63,9 +63,11 @@ Rejected as the default query strategy because API and reporting needs may requi
 
 ## Implementation Guidance
 
+The current Meeting projection repository uses parameterized PostgreSQL SQL for its writes, including `INSERT ... ON CONFLICT` upserts. This makes replay and duplicate event delivery safe for the projected rows: applying the same event again converges on the same row instead of failing on a duplicate key. Status changes are also written directly so an event whose prerequisite Meeting row is missing fails visibly and can be retried rather than being silently ignored. The SQL is parameterized through EF Core's interpolated SQL API; event values are not concatenated into SQL text. EF Core remains responsible for connection management and schema migrations. If projection writes later move to tracked EF entities, the replacement must preserve idempotent replay and make missing-row/concurrency behavior explicit.
+
 1. Define and version event names, payloads, ownership, and stream identity for each Meeting workflow.
 2. Expand the implemented stream-replay and expected-revision pattern across Meeting use cases.
-3. Implement one .NET projection into PostgreSQL and verify it can be rebuilt from the event history.
-4. Define durable consumer checkpointing, retry, duplicate-delivery, and event-versioning behavior.
+3. Add rebuild and operational procedures for the Meeting projection, including subscription reset and replay.
+4. Move Meeting queries to PostgreSQL after confirming all required event types are projected.
 5. Connect the Python minutes workflow through an explicit event contract and return its draft through an explicit result contract.
 6. Plan migration of any existing PostgreSQL Meeting data needed by the new event stream.

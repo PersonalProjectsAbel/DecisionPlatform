@@ -13,6 +13,10 @@ public sealed class MeetingConfiguration : IEntityTypeConfiguration<MeetingAggre
 
         builder.HasKey(x => x.Id);
 
+        // Domain events are persisted to KurrentDB, never as EF entities.
+        // Ignore the collection so EF does not discover MeetingEvent as a navigation.
+        builder.Ignore(x => x.UncommittedEvents);
+
         builder.Property(x => x.Id)
             .HasConversion(
                 id => id.Value,

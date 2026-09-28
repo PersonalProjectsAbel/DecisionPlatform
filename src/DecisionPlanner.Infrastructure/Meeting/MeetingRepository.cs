@@ -75,11 +75,11 @@ public sealed class MeetingRepository(KurrentDBClient client) : IMeetingReposito
     {
         var eventType = @event switch
         {
-            MeetingCreatedEvent => "meeting.created.v1",
-            ParticipantAddedEvent => "meeting.participant-added.v1",
-            MeetingStartedEvent => "meeting.started.v1",
-            MeetingCompletedEvent => "meeting.completed.v1",
-            MeetingCancelledEvent => "meeting.cancelled.v1",
+            MeetingCreatedEvent => MeetingEventTypes.Created,
+            ParticipantAddedEvent => MeetingEventTypes.ParticipantAdded,
+            MeetingStartedEvent => MeetingEventTypes.Started,
+            MeetingCompletedEvent => MeetingEventTypes.Completed,
+            MeetingCancelledEvent => MeetingEventTypes.Cancelled,
             _ => throw new InvalidOperationException(
                 $"Unsupported meeting event type: {@event.GetType().Name}")
         };
@@ -94,11 +94,11 @@ public sealed class MeetingRepository(KurrentDBClient client) : IMeetingReposito
         var @event = resolvedEvent.OriginalEvent;
         return @event.EventType switch
         {
-            "meeting.created.v1" => JsonSerializer.Deserialize<MeetingCreatedEvent>(@event.Data.Span, JsonOptions)!,
-            "meeting.participant-added.v1" => JsonSerializer.Deserialize<ParticipantAddedEvent>(@event.Data.Span, JsonOptions)!,
-            "meeting.started.v1" => JsonSerializer.Deserialize<MeetingStartedEvent>(@event.Data.Span, JsonOptions)!,
-            "meeting.completed.v1" => JsonSerializer.Deserialize<MeetingCompletedEvent>(@event.Data.Span, JsonOptions)!,
-            "meeting.cancelled.v1" => JsonSerializer.Deserialize<MeetingCancelledEvent>(@event.Data.Span, JsonOptions)!,
+            MeetingEventTypes.Created => JsonSerializer.Deserialize<MeetingCreatedEvent>(@event.Data.Span, JsonOptions)!,
+            MeetingEventTypes.ParticipantAdded => JsonSerializer.Deserialize<ParticipantAddedEvent>(@event.Data.Span, JsonOptions)!,
+            MeetingEventTypes.Started => JsonSerializer.Deserialize<MeetingStartedEvent>(@event.Data.Span, JsonOptions)!,
+            MeetingEventTypes.Completed => JsonSerializer.Deserialize<MeetingCompletedEvent>(@event.Data.Span, JsonOptions)!,
+            MeetingEventTypes.Cancelled => JsonSerializer.Deserialize<MeetingCancelledEvent>(@event.Data.Span, JsonOptions)!,
             _ => throw new InvalidOperationException($"Unknown meeting event type '{@event.EventType}'.")
         };
     }

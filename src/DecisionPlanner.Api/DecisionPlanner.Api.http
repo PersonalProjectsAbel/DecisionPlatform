@@ -1,13 +1,23 @@
-@DecisionPlanner.Api_HostAddress = http://localhost:5189
+@DecisionPlannerApi_HostAddress = http://localhost:5189
+@meetingId = 00000000-0000-0000-0000-000000000000
 
-POST {{DecisionPlanner.Api_HostAddress}}/api/meetings
+### Create a meeting
+POST {{DecisionPlannerApi_HostAddress}}/api/meetings
 Content-Type: application/json
 
 {
-	"title": "Architecture review",
+	"title": "Projection Meeting: Architecture review",
 	"description": "Review the next Meeting use cases.",
 	"startsAt": "2026-09-24T10:00:00Z",
 	"endsAt": "2026-09-24T11:00:00Z"
 }
 
-###
+### Add a participant
+# Replace @meetingId with the id returned by the create-meeting request.
+POST {{DecisionPlannerApi_HostAddress}}/api/meetings/{{meetingId}}/participants
+Content-Type: application/json
+
+{
+	"name": "Alex Morgan",
+	"email": "alex.morgan@example.com"
+}

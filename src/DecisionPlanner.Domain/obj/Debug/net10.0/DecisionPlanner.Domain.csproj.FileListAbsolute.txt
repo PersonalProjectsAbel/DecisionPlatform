@@ -9,3 +9,4 @@
 /Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Domain/obj/Debug/net10.0/refint/DecisionPlanner.Domain.dll
 /Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Domain/obj/Debug/net10.0/DecisionPlanner.Domain.pdb
 /Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Domain/obj/Debug/net10.0/ref/DecisionPlanner.Domain.dll
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Domain/obj/Debug/net10.0/DecisionPlanner.Domain.sourcelink.json

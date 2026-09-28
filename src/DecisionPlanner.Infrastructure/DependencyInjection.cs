@@ -1,6 +1,10 @@
+using DecisionPlanner.Application.Meeting.Projections;
 using DecisionPlanner.Application.Meeting;
 using DecisionPlanner.Infrastructure.Meeting;
 using DecisionPlanner.Infrastructure.Persistence;
+using DecisionPlanner.Infrastructure.Persistence.Repositories;
+using DecisionPlanner.Infrastructure.Projections;
+using DecisionPlanner.Infrastructure.Projections.Meeting;
 using KurrentDB.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +24,17 @@ public static class DependencyInjection
 
         services.AddSingleton(_ => new KurrentDBClient(
             KurrentDBClientSettings.Create(eventStoreConnectionString)));
+        services.AddSingleton(_ => new KurrentDBPersistentSubscriptionsClient(
+            KurrentDBClientSettings.Create(eventStoreConnectionString)));
         services.AddScoped<IMeetingRepository, MeetingRepository>();
+        services.AddScoped<IMeetingReadModelRepository, MeetingReadModelRepository>();
+        services.AddScoped<IProjectionEventDispatcher, ProjectionEventDispatcher>();
+        services.AddScoped<IProjectionEventHandler, MeetingCreatedProjectionHandler>();
+        services.AddScoped<IProjectionEventHandler, ParticipantAddedProjectionHandler>();
+        services.AddScoped<IProjectionEventHandler, MeetingStartedProjectionHandler>();
+        services.AddScoped<IProjectionEventHandler, MeetingCompletedProjectionHandler>();
+        services.AddScoped<IProjectionEventHandler, MeetingCancelledProjectionHandler>();
+        services.AddHostedService<MeetingProjectionWorker>();
 
         services.AddDbContext<DecisionPlannerDbContext>(options =>
         {

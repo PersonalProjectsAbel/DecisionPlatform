@@ -57,3 +57,4 @@
 /Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Api/bin/Debug/net10.0/Grpc.StatusProto.dll
 /Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Api/bin/Debug/net10.0/KurrentDB.Client.dll
 /Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Api/bin/Debug/net10.0/OpenTelemetry.Api.dll
+/Users/abel/Documents/DecisionPlatform/src/DecisionPlanner.Api/obj/Debug/net10.0/DecisionPlanner.Api.sourcelink.json

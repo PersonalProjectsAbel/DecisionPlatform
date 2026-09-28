@@ -4,6 +4,10 @@ using DecisionPlanner.Application.Meeting.AddParticipant;
 using DecisionPlanner.Application.Meeting.CancelMeeting;
 using DecisionPlanner.Application.Meeting.CompleteMeeting;
 using DecisionPlanner.Application.Meeting.CreateMeeting;
+using DecisionPlanner.Application.Meeting.CreateTopic;
+using DecisionPlanner.Application.Meeting.CreateProposal;
+using DecisionPlanner.Application.Meeting.AddDiscussionEntry;
+using DecisionPlanner.Application.Meeting.GetDiscussionEntries;
 using DecisionPlanner.Application.Meeting.GetMeeting;
 using DecisionPlanner.Application.Meeting.StartMeeting;
 using DecisionPlanner.Domain.Meeting;
@@ -56,6 +60,58 @@ public sealed class MeetingController(ISender sender) : ControllerBase
             cancellationToken);
 
         return added ? NoContent() : NotFound();
+    }
+
+    [HttpPost("{id:guid}/topics")]
+    public async Task<IActionResult> CreateTopic(
+        Guid id, CreateTopicRequest request, CancellationToken cancellationToken)
+    {
+        var topicId = await sender.Send(
+            new CreateTopicCommand(new MeetingId(id), request.Title), cancellationToken);
+        return topicId is null
+            ? NotFound()
+            : Created($"/api/meetings/{id}/topics/{topicId}", new { id = topicId });
+    }
+
+    [HttpPost("{id:guid}/topics/{topicId:guid}/proposals")]
+    public async Task<IActionResult> CreateProposal(
+        Guid id, Guid topicId, CreateProposalRequest request, CancellationToken cancellationToken)
+    {
+        var proposalId = await sender.Send(
+            new CreateProposalCommand(new MeetingId(id), topicId, request.Title, request.Description),
+            cancellationToken);
+        return proposalId is null
+            ? NotFound()
+            : Created($"/api/meetings/{id}/topics/{topicId}/proposals/{proposalId}", new { id = proposalId });
+    }
+
+    [HttpPost("{id:guid}/topics/{topicId:guid}/discussion-entries")]
+    public async Task<IActionResult> AddDiscussionEntry(
+        Guid id,
+        Guid topicId,
+        AddDiscussionEntryRequest request,
+        [FromQuery] Guid? proposalId,
+        CancellationToken cancellationToken)
+    {
+        var entryId = await sender.Send(
+            new AddDiscussionEntryCommand(
+                new MeetingId(id), topicId, proposalId,
+                request.AuthorParticipantId, request.Content), cancellationToken);
+        return entryId is null
+            ? NotFound()
+            : Created($"/api/meetings/{id}/discussion-entries/{entryId}", new { id = entryId });
+    }
+
+    [HttpGet("{id:guid}/discussion-entries")]
+    public async Task<IActionResult> GetDiscussionEntries(
+        Guid id,
+        [FromQuery] Guid? topicId,
+        [FromQuery] Guid? proposalId,
+        CancellationToken cancellationToken)
+    {
+        var entries = await sender.Send(
+            new GetDiscussionEntriesQuery(id, topicId, proposalId), cancellationToken);
+        return Ok(entries);
     }
 
     [HttpPost("{id:guid}/start")]

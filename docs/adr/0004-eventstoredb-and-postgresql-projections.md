@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted — Meeting event-stream persistence and its PostgreSQL projection are implemented; Python integration is pending.
+Accepted — Meeting event-stream persistence, the initial PostgreSQL projections, and the first Python minutes-generation integration are implemented; voting remains pending.
 
 ## Context
 
@@ -26,7 +26,7 @@ The .NET application remains a modular monolith. Modules communicate through exp
 
 ADR-0003 established EF Core, PostgreSQL, a `DbContext`, and a dedicated migrations project for the initial persistence implementation. This ADR supersedes ADR-0003 only for the write-side source of truth and the role of PostgreSQL: PostgreSQL is a projection store in the target architecture, while EventStoreDB owns the authoritative event streams.
 
-EF Core may remain useful for PostgreSQL projection storage and schema migrations. The earlier EF Core model that saved current Meeting state directly as the authoritative record has been replaced for the Meeting write path by event streams. A hosted .NET consumer now projects Meeting events into PostgreSQL. The API GET path still reads from KurrentDB until projection coverage and query behavior are reviewed. Migration from that implementation must be planned explicitly; existing data and migration history must not be discarded implicitly.
+EF Core may remain useful for PostgreSQL projection storage and schema migrations. The earlier EF Core model that saved current Meeting state directly as the authoritative record has been replaced for the Meeting write path by event streams. A hosted .NET consumer projects meeting, participant, topic, proposal, and discussion-entry events into PostgreSQL. Meeting detail GET still reads by replaying KurrentDB; the discussion-entry GET reads from PostgreSQL and is eventually consistent. Any remaining migration of existing authoritative PostgreSQL data into KurrentDB must be planned explicitly; existing data and migration history must not be discarded implicitly.
 
 ## Consequences
 
@@ -65,9 +65,11 @@ Rejected as the default query strategy because API and reporting needs may requi
 
 The current Meeting projection repository uses parameterized PostgreSQL SQL for its writes, including `INSERT ... ON CONFLICT` upserts. This makes replay and duplicate event delivery safe for the projected rows: applying the same event again converges on the same row instead of failing on a duplicate key. Status changes are also written directly so an event whose prerequisite Meeting row is missing fails visibly and can be retried rather than being silently ignored. The SQL is parameterized through EF Core's interpolated SQL API; event values are not concatenated into SQL text. EF Core remains responsible for connection management and schema migrations. If projection writes later move to tracked EF entities, the replacement must preserve idempotent replay and make missing-row/concurrency behavior explicit.
 
+Each Meeting stream now includes topic, proposal, and discussion-entry events. New meetings receive a General topic. For older streams with no General topic event, rehydration supplies a stable General topic ID derived from the meeting ID and the next successful command persists that topic as an event. Discussion entries require a participant belonging to the meeting and may reference a proposal; a missing proposal means the entry belongs to the topic discussion. The discussion-entry query returns all projected entries by default and accepts optional topic and proposal filters. Its PostgreSQL results are eventually consistent with KurrentDB.
+
 1. Define and version event names, payloads, ownership, and stream identity for each Meeting workflow.
 2. Expand the implemented stream-replay and expected-revision pattern across Meeting use cases.
 3. Add rebuild and operational procedures for the Meeting projection, including subscription reset and replay.
 4. Move Meeting queries to PostgreSQL after confirming all required event types are projected.
-5. Connect the Python minutes workflow through an explicit event contract and return its draft through an explicit result contract.
+5. The Python minutes worker consumes `meeting.completed.v1` through a persistent subscription, rebuilds context from the Meeting stream, and submits a draft to the authenticated .NET API. The API appends the versioned `meeting.minutes-draft-generated.v1` event idempotently by completion event ID. The Meeting GET response reads drafts from the event stream. The worker can run as a separate process or through the opt-in `minutes` Docker Compose profile. See [ADR-0005](0005-python-minutes-worker.md) for service boundaries, deployment, retry behavior, and the flow diagram.
 6. Plan migration of any existing PostgreSQL Meeting data needed by the new event stream.

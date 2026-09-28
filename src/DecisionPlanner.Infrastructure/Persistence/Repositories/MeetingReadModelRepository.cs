@@ -43,6 +43,81 @@ public sealed class MeetingReadModelRepository(
             """, cancellationToken);
     }
 
+    public async Task UpsertTopicAsync(TopicReadModel topic, CancellationToken cancellationToken)
+    {
+        await dbContext.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO topics ("Id", "MeetingId", "Title", "IsGeneral")
+            VALUES ({topic.Id}, {topic.MeetingId}, {topic.Title}, {topic.IsGeneral})
+            ON CONFLICT ("Id") DO UPDATE SET
+                "MeetingId" = EXCLUDED."MeetingId",
+                "Title" = EXCLUDED."Title",
+                "IsGeneral" = EXCLUDED."IsGeneral";
+            """, cancellationToken);
+    }
+
+    public async Task UpsertProposalAsync(ProposalReadModel proposal, CancellationToken cancellationToken)
+    {
+        await dbContext.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO proposals ("Id", "MeetingId", "TopicId", "Title", "Description")
+            VALUES ({proposal.Id}, {proposal.MeetingId}, {proposal.TopicId},
+                    {proposal.Title}, {proposal.Description})
+            ON CONFLICT ("Id") DO UPDATE SET
+                "MeetingId" = EXCLUDED."MeetingId",
+                "TopicId" = EXCLUDED."TopicId",
+                "Title" = EXCLUDED."Title",
+                "Description" = EXCLUDED."Description";
+            """, cancellationToken);
+    }
+
+    public async Task UpsertDiscussionEntryAsync(
+        DiscussionEntryReadModel entry,
+        CancellationToken cancellationToken)
+    {
+        await dbContext.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO discussion_entries
+                ("Id", "MeetingId", "TopicId", "ProposalId", "AuthorParticipantId",
+                 "AuthorName", "Content", "CreatedAt")
+            VALUES
+                ({entry.Id}, {entry.MeetingId}, {entry.TopicId}, {entry.ProposalId},
+                 {entry.AuthorParticipantId}, {entry.AuthorName}, {entry.Content}, {entry.CreatedAt})
+            ON CONFLICT ("Id") DO UPDATE SET
+                "MeetingId" = EXCLUDED."MeetingId",
+                "TopicId" = EXCLUDED."TopicId",
+                "ProposalId" = EXCLUDED."ProposalId",
+                "AuthorParticipantId" = EXCLUDED."AuthorParticipantId",
+                "AuthorName" = EXCLUDED."AuthorName",
+                "Content" = EXCLUDED."Content",
+                "CreatedAt" = EXCLUDED."CreatedAt";
+            """, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<DiscussionEntryReadModel>> GetDiscussionEntriesAsync(
+        Guid meetingId,
+        Guid? topicId,
+        Guid? proposalId,
+        CancellationToken cancellationToken)
+    {
+        return await dbContext.Database.SqlQuery<DiscussionEntryReadModel>($"""
+            SELECT d."Id",
+                   d."MeetingId",
+                   d."TopicId",
+                   t."Title" AS "TopicTitle",
+                   d."ProposalId",
+                   p."Title" AS "ProposalTitle",
+                   d."AuthorParticipantId",
+                   d."AuthorName",
+                   d."Content",
+                   d."CreatedAt"
+            FROM discussion_entries AS d
+            INNER JOIN topics AS t ON t."Id" = d."TopicId"
+            LEFT JOIN proposals AS p ON p."Id" = d."ProposalId"
+            WHERE d."MeetingId" = {meetingId}
+              AND ({topicId} IS NULL OR d."TopicId" = {topicId})
+              AND ({proposalId} IS NULL OR d."ProposalId" = {proposalId})
+            ORDER BY d."CreatedAt", d."Id";
+            """).ToListAsync(cancellationToken);
+    }
+
     public async Task UpdateMeetingStatusAsync(
         Guid meetingId,
         string status,

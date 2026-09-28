@@ -77,9 +77,13 @@ public sealed class MeetingRepository(KurrentDBClient client) : IMeetingReposito
         {
             MeetingCreatedEvent => MeetingEventTypes.Created,
             ParticipantAddedEvent => MeetingEventTypes.ParticipantAdded,
+            TopicCreatedEvent => MeetingEventTypes.TopicCreated,
+            ProposalCreatedEvent => MeetingEventTypes.ProposalCreated,
+            DiscussionEntryAddedEvent => MeetingEventTypes.DiscussionEntryAdded,
             MeetingStartedEvent => MeetingEventTypes.Started,
             MeetingCompletedEvent => MeetingEventTypes.Completed,
             MeetingCancelledEvent => MeetingEventTypes.Cancelled,
+            MeetingMinutesDraftGeneratedEvent => MeetingEventTypes.MinutesDraftGenerated,
             _ => throw new InvalidOperationException(
                 $"Unsupported meeting event type: {@event.GetType().Name}")
         };
@@ -96,9 +100,13 @@ public sealed class MeetingRepository(KurrentDBClient client) : IMeetingReposito
         {
             MeetingEventTypes.Created => JsonSerializer.Deserialize<MeetingCreatedEvent>(@event.Data.Span, JsonOptions)!,
             MeetingEventTypes.ParticipantAdded => JsonSerializer.Deserialize<ParticipantAddedEvent>(@event.Data.Span, JsonOptions)!,
+            MeetingEventTypes.TopicCreated => JsonSerializer.Deserialize<TopicCreatedEvent>(@event.Data.Span, JsonOptions)!,
+            MeetingEventTypes.ProposalCreated => JsonSerializer.Deserialize<ProposalCreatedEvent>(@event.Data.Span, JsonOptions)!,
+            MeetingEventTypes.DiscussionEntryAdded => JsonSerializer.Deserialize<DiscussionEntryAddedEvent>(@event.Data.Span, JsonOptions)!,
             MeetingEventTypes.Started => JsonSerializer.Deserialize<MeetingStartedEvent>(@event.Data.Span, JsonOptions)!,
             MeetingEventTypes.Completed => JsonSerializer.Deserialize<MeetingCompletedEvent>(@event.Data.Span, JsonOptions)!,
             MeetingEventTypes.Cancelled => JsonSerializer.Deserialize<MeetingCancelledEvent>(@event.Data.Span, JsonOptions)!,
+            MeetingEventTypes.MinutesDraftGenerated => JsonSerializer.Deserialize<MeetingMinutesDraftGeneratedEvent>(@event.Data.Span, JsonOptions)!,
             _ => throw new InvalidOperationException($"Unknown meeting event type '{@event.EventType}'.")
         };
     }

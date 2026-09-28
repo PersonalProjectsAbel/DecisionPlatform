@@ -27,6 +27,20 @@ public sealed class GetMeetingHandler(IMeetingRepository meetingRepository)
                     participant.Id,
                     participant.Name,
                     participant.Email))
+                .ToArray(),
+            meeting.Topics
+                .Select(topic => new TopicResponse(
+                    topic.Id,
+                    topic.Title,
+                    topic.IsGeneral,
+                    topic.Proposals.Select(proposal => new ProposalResponse(
+                        proposal.Id, proposal.Title, proposal.Description)).ToArray()))
+                .ToArray(),
+            meeting.MinutesDrafts
+                .Select(draft => new MinutesDraftResponse(
+                    draft.CompletedEventId,
+                    draft.Content,
+                    draft.GeneratedAt))
                 .ToArray());
     }
 }

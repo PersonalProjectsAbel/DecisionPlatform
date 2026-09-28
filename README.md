@@ -33,7 +33,7 @@ See [ADR-0004](docs/adr/0004-eventstoredb-and-postgresql-projections.md) for the
 
 ## Current implementation status
 
-The repository is an early implementation. Meeting use cases append versioned domain events to KurrentDB (formerly EventStoreDB) and rebuild aggregates by replaying their streams. A hosted .NET projection consumes Meeting stream events and maintains the PostgreSQL meeting and participant tables. The GET API currently reads by replaying KurrentDB streams; switching queries to PostgreSQL is a follow-up. The Python minutes service is not yet implemented.
+The repository is an early implementation. Meeting use cases append versioned domain events to KurrentDB (formerly EventStoreDB) and rebuild aggregates by replaying their streams. A hosted .NET projection maintains PostgreSQL meeting, participant, topic, proposal, and discussion-entry tables. Meeting details are still read from KurrentDB; the discussion-entry endpoint reads the PostgreSQL projection and supports optional topic/proposal filters, so it may briefly lag behind writes. Topics and proposals are included in the Meeting stream; a General topic is created for new meetings. Voting is not yet implemented. The Python minutes service now has a provider-neutral AI port with a Gemini adapter, a persistent KurrentDB worker for completed meetings, and an authenticated .NET callback that records versioned minutes-draft events. Meeting GET exposes generated drafts by replaying the stream. The worker can run as a separate host process or through the opt-in `minutes` Docker Compose profile.
 
 The solution currently contains these projects:
 
@@ -51,3 +51,4 @@ Architecture Decision Records are in [`docs/adr`](docs/adr/). Start with:
 - [ADR-0002: Use Modular and Vertical-Slice Organization](docs/adr/0002-modular-vertical-slice-organization.md)
 - [ADR-0003: Database Context and Migrations Strategy](docs/adr/0003-database-context-and-migrations.md)
 - [ADR-0004: EventStoreDB and PostgreSQL Projections](docs/adr/0004-eventstoredb-and-postgresql-projections.md)
+- [ADR-0005: Run Minutes Generation as a Python Worker](docs/adr/0005-python-minutes-worker.md)

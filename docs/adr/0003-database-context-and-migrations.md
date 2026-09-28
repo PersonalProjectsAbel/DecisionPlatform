@@ -65,7 +65,7 @@ For example:
 ```bash
 dotnet ef migrations add InitialCreate \
   --project src/DecisionPlanner.Migrations \
-  --startup-project src/DecisionPlanner.Api
+  --startup-project src/DecisionPlanner.Migrations
 ```
 
 Database updates will be applied with:
@@ -73,7 +73,7 @@ Database updates will be applied with:
 ```bash
 dotnet ef database update \
   --project src/DecisionPlanner.Migrations \
-  --startup-project src/DecisionPlanner.Api
+  --startup-project src/DecisionPlanner.Migrations
 ```
 
 The migration files will be committed to source control.

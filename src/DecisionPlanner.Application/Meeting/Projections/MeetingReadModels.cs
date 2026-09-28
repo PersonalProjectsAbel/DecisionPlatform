@@ -13,3 +13,28 @@ public sealed record ParticipantReadModel(
     Guid MeetingId,
     string Name,
     string Email);
+
+public sealed record TopicReadModel(
+    Guid Id,
+    Guid MeetingId,
+    string Title,
+    bool IsGeneral);
+
+public sealed record ProposalReadModel(
+    Guid Id,
+    Guid MeetingId,
+    Guid TopicId,
+    string Title,
+    string? Description);
+
+public sealed record DiscussionEntryReadModel(
+    Guid Id,
+    Guid MeetingId,
+    Guid TopicId,
+    string TopicTitle,
+    Guid? ProposalId,
+    string? ProposalTitle,
+    Guid AuthorParticipantId,
+    string AuthorName,
+    string Content,
+    DateTimeOffset CreatedAt);

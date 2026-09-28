@@ -1,5 +1,8 @@
 @DecisionPlannerApi_HostAddress = http://localhost:5189
 @meetingId = 00000000-0000-0000-0000-000000000000
+@participantId = 00000000-0000-0000-0000-000000000001
+@topicId = 00000000-0000-0000-0000-000000000002
+@proposalId = 00000000-0000-0000-0000-000000000003
 
 ### Create a meeting
 POST {{DecisionPlannerApi_HostAddress}}/api/meetings
@@ -21,3 +24,52 @@ Content-Type: application/json
 	"name": "Alex Morgan",
 	"email": "alex.morgan@example.com"
 }
+
+### Get meeting (copy the participant ID and General topic ID from the response)
+GET {{DecisionPlannerApi_HostAddress}}/api/meetings/{{meetingId}}
+
+### Create another topic
+POST {{DecisionPlannerApi_HostAddress}}/api/meetings/{{meetingId}}/topics
+Content-Type: application/json
+
+{
+	"title": "Pricing"
+}
+
+### Create a proposal under the selected topic
+POST {{DecisionPlannerApi_HostAddress}}/api/meetings/{{meetingId}}/topics/{{topicId}}/proposals
+Content-Type: application/json
+
+{
+	"title": "Increase by 7%",
+	"description": "Apply a 7% price increase next quarter."
+}
+
+### Add a topic-level discussion entry (omit proposalId)
+# Replace @participantId and @topicId with IDs from the meeting response.
+POST {{DecisionPlannerApi_HostAddress}}/api/meetings/{{meetingId}}/topics/{{topicId}}/discussion-entries
+Content-Type: application/json
+
+{
+	"authorParticipantId": "{{participantId}}",
+	"content": "Let's review the expected customer impact."
+}
+
+### Add a proposal-level discussion entry
+# Replace @proposalId with the proposal ID returned by the meeting response.
+POST {{DecisionPlannerApi_HostAddress}}/api/meetings/{{meetingId}}/topics/{{topicId}}/discussion-entries?proposalId={{proposalId}}
+Content-Type: application/json
+
+{
+	"authorParticipantId": "{{participantId}}",
+	"content": "This proposal may be easier to phase in."
+}
+
+### Get all discussion entries for the meeting
+GET {{DecisionPlannerApi_HostAddress}}/api/meetings/{{meetingId}}/discussion-entries
+
+### Filter discussion entries by topic
+GET {{DecisionPlannerApi_HostAddress}}/api/meetings/{{meetingId}}/discussion-entries?topicId={{topicId}}
+
+### Filter discussion entries by proposal
+GET {{DecisionPlannerApi_HostAddress}}/api/meetings/{{meetingId}}/discussion-entries?proposalId={{proposalId}}

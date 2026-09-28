@@ -52,6 +52,104 @@ namespace DecisionPlanner.Migrations.Migrations
                     b.ToTable("meetings", (string)null);
                 });
 
+            modelBuilder.Entity("DecisionPlanner.Infrastructure.Persistence.DiscussionEntryProjection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AuthorName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<Guid>("AuthorParticipantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("MeetingId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ProposalId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TopicId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorParticipantId");
+
+                    b.HasIndex("MeetingId", "CreatedAt");
+
+                    b.HasIndex("ProposalId", "CreatedAt");
+
+                    b.HasIndex("TopicId", "CreatedAt");
+
+                    b.ToTable("discussion_entries", (string)null);
+                });
+
+            modelBuilder.Entity("DecisionPlanner.Infrastructure.Persistence.ProposalProjection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<Guid>("MeetingId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<Guid>("TopicId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MeetingId");
+
+                    b.HasIndex("TopicId");
+
+                    b.ToTable("proposals", (string)null);
+                });
+
+            modelBuilder.Entity("DecisionPlanner.Infrastructure.Persistence.TopicProjection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsGeneral")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("MeetingId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MeetingId");
+
+                    b.ToTable("topics", (string)null);
+                });
+
             modelBuilder.Entity("DecisionPlanner.Domain.Meeting.Meeting", b =>
                 {
                     b.OwnsMany("DecisionPlanner.Domain.Meeting.Participant", "Participants", b1 =>
@@ -83,6 +181,50 @@ namespace DecisionPlanner.Migrations.Migrations
                         });
 
                     b.Navigation("Participants");
+                });
+
+            modelBuilder.Entity("DecisionPlanner.Infrastructure.Persistence.DiscussionEntryProjection", b =>
+                {
+                    b.HasOne("DecisionPlanner.Domain.Meeting.Meeting", null)
+                        .WithMany()
+                        .HasForeignKey("MeetingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DecisionPlanner.Infrastructure.Persistence.ProposalProjection", null)
+                        .WithMany()
+                        .HasForeignKey("ProposalId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("DecisionPlanner.Infrastructure.Persistence.TopicProjection", null)
+                        .WithMany()
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DecisionPlanner.Infrastructure.Persistence.ProposalProjection", b =>
+                {
+                    b.HasOne("DecisionPlanner.Domain.Meeting.Meeting", null)
+                        .WithMany()
+                        .HasForeignKey("MeetingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DecisionPlanner.Infrastructure.Persistence.TopicProjection", null)
+                        .WithMany()
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DecisionPlanner.Infrastructure.Persistence.TopicProjection", b =>
+                {
+                    b.HasOne("DecisionPlanner.Domain.Meeting.Meeting", null)
+                        .WithMany()
+                        .HasForeignKey("MeetingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

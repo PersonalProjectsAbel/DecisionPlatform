@@ -25,6 +25,23 @@ services:
     volumes:
       - eventstore_data:/var/lib/kurrentdb
 
+  minutes-worker:
+    build:
+      context: ./services/minutes
+    container_name: decision-planner-minutes-worker
+    profiles: ["minutes"]
+    restart: unless-stopped
+    environment:
+      AI_PROVIDER: ${AI_PROVIDER:-gemini}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.8-flash}
+      KURRENT_CONNECTION_STRING: kurrentdb://eventstoredb:2113?tls=false
+      MINUTES_SUBSCRIPTION_GROUP: ${MINUTES_SUBSCRIPTION_GROUP:-minutes-draft-generation-v1}
+      DECISION_PLANNER_API_URL: http://host.docker.internal:5189
+      MINUTES_SERVICE_API_KEY: ${MINUTES_SERVICE_API_KEY:-}
+    depends_on:
+      - eventstoredb
+
 volumes:
   postgres_data:
   eventstore_data:

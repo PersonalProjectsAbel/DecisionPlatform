@@ -12,9 +12,24 @@ public sealed record GetMeetingResponse(
     DateTimeOffset StartsAt,
     DateTimeOffset EndsAt,
     string Status,
-    IReadOnlyCollection<ParticipantResponse> Participants);
+    IReadOnlyCollection<ParticipantResponse> Participants,
+    IReadOnlyCollection<TopicResponse> Topics,
+    IReadOnlyCollection<MinutesDraftResponse> MinutesDrafts);
 
 public sealed record ParticipantResponse(
     Guid Id,
     string Name,
     string Email);
+
+public sealed record TopicResponse(
+    Guid Id,
+    string Title,
+    bool IsGeneral,
+    IReadOnlyCollection<ProposalResponse> Proposals);
+
+public sealed record ProposalResponse(Guid Id, string Title, string? Description);
+
+public sealed record MinutesDraftResponse(
+    Guid CompletedEventId,
+    string Content,
+    DateTimeOffset GeneratedAt);

@@ -31,6 +31,9 @@ public static class DependencyInjection
         services.AddScoped<IProjectionEventDispatcher, ProjectionEventDispatcher>();
         services.AddScoped<IProjectionEventHandler, MeetingCreatedProjectionHandler>();
         services.AddScoped<IProjectionEventHandler, ParticipantAddedProjectionHandler>();
+        services.AddScoped<IProjectionEventHandler, TopicCreatedProjectionHandler>();
+        services.AddScoped<IProjectionEventHandler, ProposalCreatedProjectionHandler>();
+        services.AddScoped<IProjectionEventHandler, DiscussionEntryAddedProjectionHandler>();
         services.AddScoped<IProjectionEventHandler, MeetingStartedProjectionHandler>();
         services.AddScoped<IProjectionEventHandler, MeetingCompletedProjectionHandler>();
         services.AddScoped<IProjectionEventHandler, MeetingCancelledProjectionHandler>();

@@ -1,3 +1,10 @@
 .env
 .env.*
 !.env.example
+
+# .NET build output
+**/bin/
+**/obj/
+
+# macOS metadata
+.DS_Store

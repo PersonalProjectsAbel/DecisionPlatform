@@ -43,6 +43,10 @@ The solution currently contains these projects:
 - `DecisionPlanner.Migrations` — current EF Core migration history.
 - `DecisionPlanner.Api` — HTTP API and application composition.
 
+## Local development
+
+For prerequisites, starting the local databases, applying EF Core migrations, and running the API, see the [Local development guide](docs/local-development.md).
+
 ## Architectural decisions
 
 Architecture Decision Records are in [`docs/adr`](docs/adr/). Start with:

@@ -20,5 +20,6 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app = FastAPI(title="DecisionPlanner Minutes Service", lifespan=lifespan)
     app.state.container = container
+    app.state.settings = active_settings
     app.include_router(health_router)
     return app

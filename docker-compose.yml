@@ -42,6 +42,20 @@ services:
     depends_on:
       - eventstoredb
 
+  minutes-api:
+    build:
+      context: ./services/minutes
+    container_name: decision-planner-minutes-api
+    profiles: ["minutes"]
+    restart: unless-stopped
+    command: ["uvicorn", "minutes_service.entrypoints.api:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      AI_PROVIDER: ${AI_PROVIDER:-gemini}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.8-flash}
+
 volumes:
   postgres_data:
   eventstore_data:

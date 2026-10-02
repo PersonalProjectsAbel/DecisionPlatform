@@ -24,6 +24,16 @@ uvicorn minutes_service.entrypoints.api:app --reload
 
 Health endpoint: `GET http://localhost:8000/health`.
 
+To verify that the configured AI provider is reachable, call `GET http://localhost:8000/health/ai-provider`. This makes one small generation request through the configured provider; call it manually rather than as a frequent liveness probe.
+
+For Compose development, the FastAPI service and event worker run in separate containers under the same profile:
+
+```sh
+docker compose --profile minutes up -d --build minutes-api minutes-worker
+```
+
+FastAPI is published on localhost port 8000. The worker remains a separate event-consuming process.
+
 Run the event worker in a separate process with `python -m minutes_service.entrypoints.worker`.
 
 `GEMINI_MODEL` defaults in `.env.example` to `gemini-3.8-flash` and can be changed through environment configuration. The API key is read from `GEMINI_API_KEY`; it is not stored in source control.

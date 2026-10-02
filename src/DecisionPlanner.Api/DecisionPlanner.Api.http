@@ -73,3 +73,69 @@ GET {{DecisionPlannerApi_HostAddress}}/api/meetings/{{meetingId}}/discussion-ent
 
 ### Filter discussion entries by proposal
 GET {{DecisionPlannerApi_HostAddress}}/api/meetings/{{meetingId}}/discussion-entries?proposalId={{proposalId}}
+
+### End-to-end smoke test: create a meeting through generated minutes
+# Prerequisites:
+# - Start PostgreSQL and KurrentDB, apply migrations, and run the .NET API.
+# - Start the Python minutes worker before sending the Complete request below.
+# - Configure GEMINI_API_KEY for the worker and the same service key for
+#   MINUTES_SERVICE_API_KEY (worker) and MinutesService__ApiKey (.NET API).
+# - See docs/local-development.md for startup, migration, and worker commands.
+# Run these requests in order. VS Code REST Client captures IDs from earlier
+# responses. The PostgreSQL discussion projection is asynchronous; repeat the
+# projection GET until the discussion entry appears.
+
+### 1. Create a meeting
+# @name smokeCreateMeeting
+POST {{DecisionPlannerApi_HostAddress}}/api/meetings
+Content-Type: application/json
+
+{
+	"title": "Minutes pipeline smoke test",
+	"description": "End-to-end verification of KurrentDB, PostgreSQL projection, and Python minutes generation.",
+	"startsAt": "2030-01-15T10:00:00Z",
+	"endsAt": "2030-01-15T10:30:00Z"
+}
+
+@smokeMeetingId = {{smokeCreateMeeting.response.body.$.id}}
+
+### 2. Add a participant
+POST {{DecisionPlannerApi_HostAddress}}/api/meetings/{{smokeMeetingId}}/participants
+Content-Type: application/json
+
+{
+	"name": "Minutes Pipeline Tester",
+	"email": "minutes-pipeline-tester@example.com"
+}
+
+### 3. Read the meeting to capture its participant and General topic IDs
+# @name smokeGetMeetingIds
+GET {{DecisionPlannerApi_HostAddress}}/api/meetings/{{smokeMeetingId}}
+
+@smokeParticipantId = {{smokeGetMeetingIds.response.body.$.participants[0].id}}
+@smokeGeneralTopicId = {{smokeGetMeetingIds.response.body.$.topics[0].id}}
+
+### 4. Start the meeting
+POST {{DecisionPlannerApi_HostAddress}}/api/meetings/{{smokeMeetingId}}/start
+
+### 5. Add a discussion entry to the General topic
+POST {{DecisionPlannerApi_HostAddress}}/api/meetings/{{smokeMeetingId}}/topics/{{smokeGeneralTopicId}}/discussion-entries
+Content-Type: application/json
+
+{
+	"authorParticipantId": "{{smokeParticipantId}}",
+	"content": "We agreed to prepare a concise summary of the discussion and next steps."
+}
+
+### 6. Verify the discussion entry reached the PostgreSQL projection
+# Repeat this request if the projection has not caught up yet.
+GET {{DecisionPlannerApi_HostAddress}}/api/meetings/{{smokeMeetingId}}/discussion-entries
+
+### 7. Complete the meeting to trigger minutes generation
+# The Python worker must already be running; this emits meeting.completed.v1.
+POST {{DecisionPlannerApi_HostAddress}}/api/meetings/{{smokeMeetingId}}/complete
+
+### 8. Check for the generated minutes draft
+# Repeat this GET while the worker processes the event. Success is a non-empty
+# minutesDrafts array in the meeting response.
+GET {{DecisionPlannerApi_HostAddress}}/api/meetings/{{smokeMeetingId}}

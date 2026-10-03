@@ -38,6 +38,36 @@ Run the event worker in a separate process with `python -m minutes_service.entry
 
 `GEMINI_MODEL` defaults in `.env.example` to `gemini-3.8-flash` and can be changed through environment configuration. The API key is read from `GEMINI_API_KEY`; it is not stored in source control.
 
+## Generated minutes format
+
+The worker submits the AI-generated minutes draft as Markdown. Drafts use these sections so readers can quickly find the meeting summary, discussion, proposals, decisions, and follow-up work:
+
+```markdown
+## Summary
+
+A concise summary of the meeting's purpose and outcome.
+
+## Topics and Discussion
+
+### General
+
+- Discussion points, attributed to participants when useful.
+
+## Proposals
+
+- Proposals discussed, or "None recorded."
+
+## Decisions
+
+- Decisions made, or "None recorded."
+
+## Action Items
+
+- Follow-up tasks with an owner when one was identified, or "None recorded."
+```
+
+Include only information supported by the recorded meeting history. If a category has no recorded content, say "None recorded." The draft remains a draft for review; it does not itself record a decision or create an action in the domain model.
+
 ## Current step
 
 The service includes a persistent KurrentDB worker filtered to `meeting.completed.v1`. It reads the full Meeting stream, builds context from the recorded topics/proposals/discussion, generates a Markdown draft via `AIProvider`, and submits it to the .NET API. The worker acknowledges only after the API accepts the draft; failed deliveries are retried. The .NET API must be running at `DECISION_PLANNER_API_URL` and configured with the same `MINUTES_SERVICE_API_KEY`. The subscription starts at the end of the event log when first created, so it will process future completions without automatically sending historical meetings to Gemini. Start the worker before completing meetings; existing completed meetings require an intentional backfill. Subscription creation requires KurrentDB admin privileges. The result contract is `POST /api/internal/meetings/{meetingId}/minutes-draft`, carrying the source `completedEventId`, draft `content`, and `generatedAt`; .NET appends `meeting.minutes-draft-generated.v1`. A repeated source completion ID is idempotent.

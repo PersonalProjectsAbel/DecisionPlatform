@@ -112,8 +112,8 @@ public sealed class MeetingReadModelRepository(
             INNER JOIN topics AS t ON t."Id" = d."TopicId"
             LEFT JOIN proposals AS p ON p."Id" = d."ProposalId"
             WHERE d."MeetingId" = {meetingId}
-              AND ({topicId} IS NULL OR d."TopicId" = {topicId})
-              AND ({proposalId} IS NULL OR d."ProposalId" = {proposalId})
+              AND (CAST({topicId} AS uuid) IS NULL OR d."TopicId" = {topicId})
+              AND (CAST({proposalId} AS uuid) IS NULL OR d."ProposalId" = {proposalId})
             ORDER BY d."CreatedAt", d."Id";
             """).ToListAsync(cancellationToken);
     }
